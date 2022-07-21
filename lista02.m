@@ -109,6 +109,7 @@ input('Aperte qualquer botão para seguir para II.2.2.\n');
 F = [0,.4,.5,1]; A = [1,1,0,0];
 H1d = remez(10,F,A);
 H2d = H1d'*H1d;
+H2d = H2d*4;
 fz_plate = filter2(H2d, z_plate);
 sub_zp = repelem(fz_plate(1:2:end,1:2:end), 2, 2);
 figure('Name', 'filtrado, subamostrado, fator 2 com repeticoes (II.2.2)');
@@ -161,12 +162,41 @@ close all;
 h0 = [.5 .5];
 h1 = conv(h0,h0);
 h2 = conv(h1,h1);
+h_q4 = {h0, h1, h2};
 
 hh0 = 4*h0'*h0;
 hh1 = 4*h1'*h1;
 hh2 = 4*h2'*h2;
+h_q5 = {hh0, hh1, hh2, H2d};
 
-%% III.4 e III.5 (resposta em freq. dos filtros)
+%% III.4 (resposta em freq. dos filtros)
+labels = {'h0', 'h1', 'h2'};
+
+for i = 1:numel(h_q4)
+    if i == 1
+        pivot = figure('Name', labels{i});
+    else
+        figure('Name', labels{i});
+    end
+    freqz(h_q4{i},1);
+end
+fprintf('Feche as figuras para seguir para a próxima questão');
+uiwait(pivot);
+close all;
+
+%% e III.5 (resposta em freq. dos filtros)
+labels = {'hh0', 'hh1', 'hh2', 'H2d'}';
+for i = 1:numel(h_q5)
+    if i == 1
+        pivot = figure('Name', labels{i});
+    else
+        figure('Name', labels{i});
+    end
+    freqz2(h_q5{i});
+end
+fprintf('Feche as figuras para seguir para a próxima questão');
+uiwait(pivot);
+close all;
 
 %% III.6
 im_lenab_d = double(im_lenab)/255;
@@ -185,3 +215,28 @@ for i = 1:numel(ims)
     imshow(ims{i},Colormap=gray);
     truesize;
 end
+
+fprintf('Feche o arquivo original para seguir ao próximo item.\n')
+uiwait(pivot);
+close all;
+
+%% III.7
+zplate_hh0 = filter2(hh0, z_plate);
+zplate_hh1 = filter2(hh1, z_plate);
+zplate_hh2 = filter2(hh2, z_plate);
+zplate_H2d = filter2(H2d, z_plate);
+
+pivot = figure('Name', 'Original');
+imshow(z_plate,Colormap=gray);
+truesize;
+ims = {zplate_hh0, zplate_hh1, zplate_hh2, zplate_H2d};
+titles = {'Filtrado por hh0', 'Filtrado por hh1', 'Filtrado por hh2', 'Filtrado por H2d (II.2.2)'};
+for i = 1:numel(ims)
+    figure('Name', titles{i});
+    imshow(ims{i},Colormap=gray);
+    truesize;
+end
+
+fprintf('Feche o arquivo original para seguir ao próximo item.\n')
+uiwait(pivot);
+close all;
